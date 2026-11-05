@@ -5,8 +5,6 @@ import { useLocale } from "@/lib/locale";
 
 export function HowToUse({ embedded = false }: { embedded?: boolean }) {
   const { t, locale } = useLocale();
-  const config = locale === "en" ? "/live-panel/heyi-en.json" : "/live-panel/heyi-zh.json";
-
   return (
     <div className="home-section space-y-8" id="guide">
       <section className="space-y-3">
@@ -17,12 +15,13 @@ export function HowToUse({ embedded = false }: { embedded?: boolean }) {
         )}
       </section>
 
-      <div className="live-panel">
+      <div className="live-panel live-panel--flow">
         <iframe
           key={locale}
-          src={`/live-panel/template.html?config=${encodeURIComponent(config)}`}
+          src={`/heyi-flow.html?lang=${locale}`}
           title={t.panelAria}
           className="live-panel__frame"
+          allow="pointer-lock"
         />
       </div>
 

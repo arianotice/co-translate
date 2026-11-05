@@ -7,9 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Noto Sans SC", "Sora", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Noto Sans SC", Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+  --font-serif: "Noto Serif SC", "Songti SC", Simsun, serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  --font-heading: "Sora", "Noto Sans SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "Noto Serif SC", "Noto Sans SC", "Songti SC", serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,88 +50,100 @@
 }
 
 :root {
-  --bg: #000000;
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.62);
-  --text-dimmer: rgba(255, 255, 255, 0.42);
-  --line: rgba(255, 255, 255, 0.14);
-  --line-strong: rgba(255, 255, 255, 0.26);
-  --fill-ghost: rgba(255, 255, 255, 0.05);
-  --fill-solid: rgba(255, 255, 255, 0.1);
+  --bg: #f3eee4;
+  --text: #1c1712;
+  --text-dim: rgba(28, 23, 18, 0.64);
+  --text-dimmer: rgba(28, 23, 18, 0.42);
+  --line: rgba(28, 23, 18, 0.14);
+  --line-strong: rgba(28, 23, 18, 0.28);
+  --fill-ghost: rgba(139, 46, 31, 0.05);
+  --fill-solid: rgba(139, 46, 31, 0.1);
   --gutter: clamp(20px, 5vw, 100px);
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
-  --font-display: "Sora", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-cjk: "Noto Sans SC", "Sora", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --paper: #000000;
-  --sheet: rgba(255, 255, 255, 0.05);
-  --seal: #ffffff;
-  --seal-soft: rgba(255, 255, 255, 0.09);
-  --background: #000000;
-  --foreground: #ffffff;
-  --card: rgba(4, 4, 6, 0.72);
-  --card-foreground: #ffffff;
-  --popover: #0a0a0c;
-  --popover-foreground: #ffffff;
-  --primary: #ffffff;
-  --primary-foreground: #000000;
-  --secondary: rgba(255, 255, 255, 0.1);
-  --secondary-foreground: #ffffff;
-  --muted: rgba(255, 255, 255, 0.08);
-  --muted-foreground: rgba(255, 255, 255, 0.62);
-  --accent: rgba(255, 255, 255, 0.09);
-  --accent-foreground: #ffffff;
-  --destructive: #ff6b5a;
-  --border: rgba(255, 255, 255, 0.14);
-  --input: rgba(255, 255, 255, 0.26);
-  --ring: rgba(255, 255, 255, 0.7);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --font-display: "Noto Serif SC", "Songti SC", serif;
+  --font-cjk: "Noto Sans SC", Tahoma, Arial, "Helvetica Neue", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+  --paper: #f7f1e6;
+  --sheet: rgba(255, 252, 246, 0.86);
+  --seal: #8b2e1f;
+  --seal-soft: rgba(139, 46, 31, 0.1);
+  --background: #f3eee4;
+  --foreground: #1c1712;
+  --card: rgba(255, 252, 246, 0.78);
+  --card-foreground: #1c1712;
+  --popover: #fffaf2;
+  --popover-foreground: #1c1712;
+  --primary: #8b2e1f;
+  --primary-foreground: #fffaf2;
+  --secondary: rgba(28, 23, 18, 0.06);
+  --secondary-foreground: #1c1712;
+  --muted: rgba(28, 23, 18, 0.06);
+  --muted-foreground: rgba(28, 23, 18, 0.64);
+  --accent: rgba(139, 46, 31, 0.08);
+  --accent-foreground: #1c1712;
+  --destructive: #b42318;
+  --border: rgba(28, 23, 18, 0.14);
+  --input: rgba(28, 23, 18, 0.22);
+  --ring: #8b2e1f;
+  --chart-1: #8b2e1f;
+  --chart-2: #1c1712;
+  --chart-3: #8a7350;
+  --chart-4: #4a3f32;
+  --chart-5: #c4b39a;
   --radius: 0;
-  --sidebar: #000000;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ffffff;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: rgba(255, 255, 255, 0.08);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.14);
-  --sidebar-ring: rgba(255, 255, 255, 0.7);
+  --sidebar: #efe6d6;
+  --sidebar-foreground: #1c1712;
+  --sidebar-primary: #8b2e1f;
+  --sidebar-primary-foreground: #fffaf2;
+  --sidebar-accent: rgba(139, 46, 31, 0.08);
+  --sidebar-accent-foreground: #1c1712;
+  --sidebar-border: rgba(28, 23, 18, 0.14);
+  --sidebar-ring: #8b2e1f;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --bg: #0b0a08;
+  --text: #f4efe6;
+  --text-dim: rgba(244, 239, 230, 0.64);
+  --text-dimmer: rgba(244, 239, 230, 0.42);
+  --line: rgba(244, 239, 230, 0.14);
+  --line-strong: rgba(244, 239, 230, 0.28);
+  --fill-ghost: rgba(244, 239, 230, 0.05);
+  --fill-solid: rgba(244, 239, 230, 0.1);
+  --paper: #0b0a08;
+  --sheet: rgba(20, 18, 14, 0.72);
+  --seal: #d4a574;
+  --seal-soft: rgba(212, 165, 116, 0.12);
+  --background: #0b0a08;
+  --foreground: #f4efe6;
+  --card: rgba(16, 14, 11, 0.78);
+  --card-foreground: #f4efe6;
+  --popover: #14120e;
+  --popover-foreground: #f4efe6;
+  --primary: #f4efe6;
+  --primary-foreground: #0b0a08;
+  --secondary: rgba(244, 239, 230, 0.1);
+  --secondary-foreground: #f4efe6;
+  --muted: rgba(244, 239, 230, 0.08);
+  --muted-foreground: rgba(244, 239, 230, 0.64);
+  --accent: rgba(212, 165, 116, 0.12);
+  --accent-foreground: #f4efe6;
+  --destructive: #ff6b5a;
+  --border: rgba(244, 239, 230, 0.14);
+  --input: rgba(244, 239, 230, 0.26);
+  --ring: #d4a574;
+  --chart-1: #d4a574;
+  --chart-2: #f4efe6;
+  --chart-3: #8a7350;
+  --chart-4: #4a3f32;
+  --chart-5: #1c1914;
+  --sidebar: #11100c;
+  --sidebar-foreground: #f4efe6;
+  --sidebar-primary: #d4a574;
+  --sidebar-primary-foreground: #0b0a08;
+  --sidebar-accent: rgba(244, 239, 230, 0.08);
+  --sidebar-accent-foreground: #f4efe6;
+  --sidebar-border: rgba(244, 239, 230, 0.14);
+  --sidebar-ring: #d4a574;
 }
 
 @layer base {
@@ -138,11 +151,13 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-black text-white antialiased;
-    font-family: "Noto Sans SC", "Sora", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-cjk);
+    hanging-punctuation: first last;
   }
   html {
-    background: #000;
+    background: var(--background);
   }
   [data-slot="button"],
   [data-slot="card"],
@@ -239,33 +254,36 @@
 
 .roll-tagline--hero .roll-tagline__item {
   height: 0.95em;
-  font-family: "Sora", "Noto Sans SC", sans-serif;
-  font-weight: 200;
+  font-family: var(--font-display);
+  font-weight: 600;
   font-size: clamp(56px, 9.4vw, 140px);
   letter-spacing: 0.02em;
   line-height: 0.95;
-  color: #fff;
+  color: var(--text);
 }
 
 .home-hero {
   display: flex;
-  min-height: calc(100svh - 72px);
-  min-height: calc(100vh - 72px);
+  min-height: min(88svh, 820px);
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: clamp(28px, 3.4vw, 56px);
-  padding: clamp(32px, 4vw, 72px) 0 clamp(64px, 8vw, 120px);
+  gap: clamp(16px, 2.4vw, 36px);
+  padding: clamp(24px, 4vw, 64px) 12px clamp(48px, 6vw, 96px);
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .hero-brands {
   position: relative;
   width: min(92vw, 1100px);
-  height: 1.15em;
+  height: 1.35em;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .hero-brands__item {
@@ -273,14 +291,17 @@
   left: 0;
   right: 0;
   margin: 0;
-  font-family: "Sora", "Noto Sans SC", sans-serif;
-  font-weight: 200;
-  font-size: clamp(52px, 9.6vw, 132px);
-  letter-spacing: 0.02em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 5.6vw, 72px);
+  letter-spacing: 0.01em;
   line-height: 1.15;
-  color: #fff;
+  color: var(--text);
   text-align: center;
   white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   opacity: 0;
   animation: brand-fade 14.4s ease-in-out infinite;
 }
@@ -300,13 +321,29 @@
 }
 
 .home-lead {
-  max-width: 36ch;
-  font-family: "JetBrains Mono", "Noto Sans SC", ui-monospace, monospace;
-  font-weight: 300;
-  font-size: clamp(14px, 1.15vw, 22px);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+  max-width: 28em;
+  min-height: 4.6em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(18px, 1.7vw, 28px);
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.home-lead__line {
+  display: block;
+  animation: lead-in 0.55s var(--ease-premium);
+}
+
+.home-lead .drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 2.7em;
+  font-weight: 700;
+  line-height: 0.86;
+  padding-right: 0.08em;
+  color: var(--seal);
 }
 
 .home-cta {
@@ -328,7 +365,13 @@
   width: 100%;
   aspect-ratio: 1200 / 620;
   border: 1px solid var(--line);
-  background: #050505;
+  background: var(--sheet);
+}
+
+.live-panel--flow {
+  aspect-ratio: 16 / 9;
+  min-height: min(72vh, 720px);
+  background: #0b0a08;
 }
 
 .live-panel__frame {
@@ -337,7 +380,7 @@
   width: 100%;
   height: 100%;
   border: 0;
-  background: #050505;
+  background: var(--sheet);
 }
 
 .home-section:last-child {
@@ -345,11 +388,11 @@
 }
 
 .home-section__title {
-  font-family: "Sora", "Noto Sans SC", sans-serif;
-  font-weight: 200;
+  font-family: var(--font-display);
+  font-weight: 600;
   font-size: clamp(28px, 3.6vw, 48px);
-  letter-spacing: 0.03em;
-  line-height: 1.15;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
   margin-top: clamp(16px, 2vw, 28px);
   max-width: 18ch;
 }
@@ -365,9 +408,15 @@
 
 .feature-card {
   grid-column: span 2;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--sheet);
   padding: clamp(22px, 2.4vw, 36px);
   min-height: 180px;
+  transition: transform 0.35s var(--ease-premium), background 0.25s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--sheet) 88%, var(--seal));
 }
 
 a.feature-card--link {
@@ -394,8 +443,13 @@ a.feature-card--link:hover {
   flex: 0 0 min(78vw, 340px);
   scroll-snap-align: start;
   border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--sheet);
   padding: 22px 22px 26px;
+  transition: transform 0.35s var(--ease-premium);
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
 }
 
 .review-card__who {
@@ -429,8 +483,8 @@ a.feature-card--link:hover {
 }
 
 .feature-card h3 {
-  font-family: "Sora", "Noto Sans SC", sans-serif;
-  font-weight: 300;
+  font-family: var(--font-display);
+  font-weight: 600;
   font-size: clamp(18px, 1.6vw, 24px);
   margin-bottom: 12px;
 }
@@ -478,7 +532,7 @@ a.feature-card--link:hover {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #fff;
+  color: var(--text);
   font-size: 0.92rem;
   line-height: 2;
   background: none;
@@ -498,7 +552,7 @@ a.feature-card--link:hover {
   height: 44px;
   justify-content: center;
   border: 1px solid var(--line-strong);
-  color: #fff;
+  color: var(--text);
 }
 
 .site-footer a:hover,
@@ -668,7 +722,13 @@ a.feature-card--link:hover {
 }
 
 
+@keyframes lead-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .home-lead__line,
   .icon-flow:hover svg:not(.animate-spin),
   .icon-flow::before,
   .icon-flow::after,
@@ -682,9 +742,10 @@ a.feature-card--link:hover {
 }
 
 .font-heading {
-  font-family: "Sora", "Noto Sans SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 200;
-  letter-spacing: 0.03em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
 }
 
 .font-mono-ui {
@@ -698,14 +759,16 @@ a.feature-card--link:hover {
   isolation: isolate;
   min-height: 100vh;
   min-height: 100svh;
-  background: #000;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
 }
 
 .site__media {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: #000;
+  background: var(--bg);
 }
 
 .site__media video,
@@ -722,8 +785,8 @@ a.feature-card--link:hover {
   z-index: 0;
   pointer-events: none;
   background:
-    linear-gradient(to right, transparent 0%, transparent 45%, rgba(0, 0, 0, 0.45) 72%, rgba(0, 0, 0, 0.72) 100%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 22%, transparent 78%, rgba(0, 0, 0, 0.65) 100%);
+    linear-gradient(to right, transparent 0%, transparent 45%, color-mix(in srgb, var(--bg) 45%, transparent) 72%, color-mix(in srgb, var(--bg) 78%, transparent) 100%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--bg) 62%, transparent) 0%, transparent 22%, transparent 78%, color-mix(in srgb, var(--bg) 72%, transparent) 100%);
 }
 
 .site__frame {
@@ -745,11 +808,11 @@ a.feature-card--link:hover {
 }
 
 .site-logo {
-  font-family: var(--font-display), var(--font-cjk), sans-serif;
-  font-weight: 200;
-  font-size: clamp(20px, 1.75vw, 30px);
-  letter-spacing: 0.16em;
-  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(22px, 1.8vw, 32px);
+  letter-spacing: 0.08em;
+  color: var(--text);
   line-height: 1;
   text-decoration: none;
 }
@@ -765,7 +828,7 @@ a.feature-card--link:hover {
   font-size: clamp(11px, 0.78vw, 14px);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--text);
   transition: color 0.25s ease;
 }
 
@@ -775,8 +838,8 @@ a.feature-card--link:hover {
 }
 
 .site-nav__link[data-active="true"] {
-  color: #fff;
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.5);
+  color: var(--text);
+  box-shadow: inset 0 -1px 0 var(--seal);
 }
 
 .site-nav__cta {
@@ -784,16 +847,17 @@ a.feature-card--link:hover {
   font-size: clamp(11px, 0.78vw, 14px);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--text);
   padding: clamp(12px, 1vw, 17px) clamp(20px, 1.8vw, 32px);
   border: 1px solid var(--line-strong);
   background: transparent;
-  transition: background 0.25s ease, border-color 0.25s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.35s var(--ease-premium);
 }
 
 .site-nav__cta:hover {
   background: var(--fill-ghost);
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: var(--seal);
+  transform: translateY(-1px);
 }
 
 .locale-cta {
@@ -820,7 +884,7 @@ a.feature-card--link:hover {
 }
 
 .site-legal a {
-  color: #fff;
+  color: var(--text);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
@@ -836,7 +900,9 @@ a.feature-card--link:hover {
   font-size: clamp(11px, 0.72vw, 14px);
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.09);
+  background: var(--fill-ghost);
+  color: var(--text-dim);
+  gap: 8px;
   padding: clamp(9px, 0.8vw, 14px) clamp(14px, 1.1vw, 20px);
   line-height: 1;
 }
@@ -872,7 +938,7 @@ a.feature-card--link:hover {
   left: 50%;
   width: 22px;
   height: 1px;
-  background: #fff;
+  background: var(--text);
   transform: translateX(-50%);
   transition: transform 0.45s var(--ease-premium), opacity 0.25s ease;
 }
@@ -903,7 +969,7 @@ a.feature-card--link:hover {
   align-items: center;
   justify-content: center;
   gap: 28px;
-  background: rgba(4, 4, 6, 0.94);
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
   backdrop-filter: blur(28px) saturate(140%);
   clip-path: circle(3% at calc(100% - 42px) 42px);
   opacity: 0;
@@ -923,7 +989,7 @@ a.feature-card--link:hover {
   font-size: clamp(20px, 5.5vw, 28px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--text);
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.4s ease, transform 0.5s var(--ease-premium);
@@ -1074,4 +1140,44 @@ a.feature-card--link:hover {
 .guide th {
   background: var(--muted);
   font-weight: 600;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: none;
+}
+
+.theme-toggle:hover {
+  border-color: var(--seal);
+  background: var(--fill-ghost);
+}
+
+html:not(.dark) .site__media {
+  opacity: 0.18;
+  filter: grayscale(0.35) contrast(1.05);
+}
+
+html:not(.dark) .site__media video {
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 720px) {
+  .hero-brands__item {
+    font-size: clamp(28px, 11vw, 52px);
+    white-space: normal;
+  }
+
+  .home-lead {
+    max-width: 36em;
+    font-size: 1.05rem;
+  }
 }

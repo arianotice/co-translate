@@ -31,6 +31,8 @@ export type ClientModelSettings = {
 
 export const DEFAULT_DOMAINS = ["通用", "技术", "商务", "法律", "学术", "文学", "时政", "机构", "缩略词"] as const;
 
+export type { SourceBriefing } from "./briefing";
+
 export type AgentId = "planner" | "terminology" | "translator" | "style" | "risk";
 
 export type PlannerOutput = {

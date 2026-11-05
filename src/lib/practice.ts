@@ -1,6 +1,8 @@
 import { RISK_CATEGORIES } from "./agents";
+import { briefingQuery, formatBriefing, type SourceBriefing } from "./briefing";
 import { sourceLang, targetLang } from "./direction";
 import { applyGlossaryDraft, formatMatchedTerms, matchTerms } from "./glossary";
+import { plannerDigest } from "./long-text";
 import { completeMinimax, extractJsonObject } from "./minimax";
 import { hashPracticeTexts, issuePracticeGrant } from "./practice-grant";
 import { ragBrief } from "./rag";
@@ -26,16 +28,25 @@ export type PracticeSettings = {
 
 export type PracticeEmit = (event: string, data: unknown) => void;
 
-const MAX_CHARS = 12000;
+const MAX_CHARS = 48000;
 
 function clip(value: string) {
   const text = value.trim();
   return text.length > MAX_CHARS ? `${text.slice(0, MAX_CHARS)}\n…` : text;
 }
 
+function windowForModel(value: string) {
+  return value.length > 9000 ? plannerDigest(value, 9000) : value;
+}
+
 function ragBlock(rag?: string) {
   if (!rag?.trim()) return "";
   return `\n\n参考知识（只约束批评方法，不得编造源文没有的事实）：\n${rag.trim()}`;
+}
+
+function briefingBlock(briefing?: string) {
+  if (!briefing?.trim()) return "";
+  return `\n\n${briefing.trim()}`;
 }
 
 async function runModel(
@@ -68,6 +79,7 @@ export function practicePlannerMessages(
   domain: string,
   direction: TranslateDirection,
   rag?: string,
+  briefing?: string,
 ) {
   return [
     {
@@ -79,7 +91,7 @@ export function practicePlannerMessages(
       content: `业务域：${domain}
 方向：${sourceLang(direction)} → ${targetLang(direction)}
 
-对照原文、参考译文和译者自己的译文，判断原文功能、目标读者，以及奈达所说的功能动态对等在这篇里具体要求什么。挑战只写练习里必须盯住的点。${ragBlock(rag)}
+对照原文、参考译文和译者自己的译文，判断原文功能、目标读者，以及奈达所说的功能动态对等在这篇里具体要求什么。挑战只写练习里必须盯住的点。结构用词按背景供给理解。${briefingBlock(briefing)}${ragBlock(rag)}
 
 输出 JSON：
 {
@@ -100,6 +112,7 @@ export function practiceTerminologyMessages(
   student: string,
   matches: TermMatch[],
   rag?: string,
+  briefing?: string,
 ) {
   return [
     {
@@ -108,7 +121,7 @@ export function practiceTerminologyMessages(
     },
     {
       role: "user" as const,
-      content: `对照参考译文与译者自己的译文在术语、专名、机构名、关键动词上的差别。已锁定术语供核验，不得发明官方译名。${ragBlock(rag)}
+      content: `对照参考译文与译者自己的译文在术语、专名、机构名、结构单位、关键动词上的差别。已锁定术语供核验，不得发明官方译名。${briefingBlock(briefing)}${ragBlock(rag)}
 
 已锁定术语：
 ${formatMatchedTerms(matches)}
@@ -401,13 +414,19 @@ export async function runPracticeCritique(options: {
   glossary: Parameters<typeof matchTerms>[1];
   settings: PracticeSettings;
   usedHostKey: boolean;
+  briefing?: SourceBriefing | null;
   emit: PracticeEmit;
 }) {
   const source = clip(options.source);
   const reference = clip(options.reference);
   const student = clip(options.student);
+  const viewSource = windowForModel(source);
+  const viewReference = windowForModel(reference);
+  const viewStudent = windowForModel(student);
   const domain = options.domain?.trim() || "通用";
   const direction = options.direction ?? "zh-en";
+  const briefing = formatBriefing(options.briefing);
+  const ragQuery = [source, briefingQuery(options.briefing)].filter(Boolean).join("\n");
   const matches = matchTerms(source, options.glossary, { direction, domain });
   const locked = applyGlossaryDraft(source, matches);
 
@@ -415,7 +434,15 @@ export async function runPracticeCritique(options: {
   const planner = parsePlanner(
     await runModel(
       options.settings,
-      practicePlannerMessages(source, reference, student, domain, direction, ragBrief("planner", source, domain)),
+      practicePlannerMessages(
+        viewSource,
+        viewReference,
+        viewStudent,
+        domain,
+        direction,
+        ragBrief("planner", ragQuery, domain),
+        briefing,
+      ),
     ),
   );
   options.emit("agent-done", { agent: "planner", output: planner });
@@ -425,11 +452,12 @@ export async function runPracticeCritique(options: {
     await runModel(
       options.settings,
       practiceTerminologyMessages(
-        source,
-        reference,
-        student,
+        viewSource,
+        viewReference,
+        viewStudent,
         matches,
-        ragBrief("terminology", `${source}\n${reference}\n${student}`, domain),
+        ragBrief("terminology", `${ragQuery}\n${reference}\n${student}`, domain),
+        briefing,
       ),
     ),
   );
@@ -439,7 +467,7 @@ export async function runPracticeCritique(options: {
   const diff = parseDiff(
     await runModel(
       options.settings,
-      practiceDiffMessages(source, reference, student, planner, ragBrief("translator", source, domain)),
+      practiceDiffMessages(viewSource, viewReference, viewStudent, planner, ragBrief("translator", ragQuery, domain)),
     ),
   );
   options.emit("agent-done", { agent: "translator", output: diff });
@@ -448,7 +476,13 @@ export async function runPracticeCritique(options: {
   const appreciation = parseAppreciation(
     await runModel(
       options.settings,
-      practiceAppreciationMessages(source, reference, student, planner, ragBrief("style", `${source}\n${reference}`, domain)),
+      practiceAppreciationMessages(
+        viewSource,
+        viewReference,
+        viewStudent,
+        planner,
+        ragBrief("style", `${ragQuery}\n${reference}`, domain),
+      ),
     ),
   );
   options.emit("agent-done", { agent: "style", output: appreciation });
@@ -457,7 +491,7 @@ export async function runPracticeCritique(options: {
   const risk = parseRisk(
     await runModel(
       options.settings,
-      practiceRiskMessages(source, student, planner, matches, ragBrief("risk", source, domain)),
+      practiceRiskMessages(viewSource, viewStudent, planner, matches, ragBrief("risk", ragQuery, domain)),
     ),
   );
   options.emit("agent-done", { agent: "risk", output: risk });

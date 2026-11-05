@@ -35,6 +35,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { loadClientSettings, settingsPayload } from "@/lib/client-settings";
 import { DEFAULT_WORKSHOP_DOMAINS } from "@/lib/examples";
+import { downloadText, glossaryToCsv, glossaryToTmx } from "@/lib/glossary-export";
 import { uniqueDomains } from "@/lib/glossary";
 import { loadLastPair } from "@/lib/last-pair";
 import { domainLabel, useLocale } from "@/lib/locale";
@@ -216,8 +217,8 @@ export function GlossaryManager() {
     }
   }
 
-  async function extractTerms() {
-    if (!pairSource.trim() || !pairTranslation.trim()) {
+  async function extractTerms(sourceOnly = false) {
+    if (!pairSource.trim() || (!sourceOnly && !pairTranslation.trim())) {
       toast.error(t.extractHint);
       return;
     }
@@ -229,7 +230,7 @@ export function GlossaryManager() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           source: pairSource,
-          translation: pairTranslation,
+          translation: sourceOnly ? "" : pairTranslation,
           domain: domain === "全部" ? "通用" : domain,
           ...settingsPayload(settings),
         }),
@@ -285,15 +286,15 @@ export function GlossaryManager() {
   }
 
   function exportJson() {
-    const blob = new Blob([JSON.stringify(terms, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "glossary.json";
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadText("glossary.json", JSON.stringify(terms, null, 2), "application/json");
+  }
+
+  function exportTmx() {
+    downloadText("glossary.tmx", glossaryToTmx(terms), "application/xml");
+  }
+
+  function exportCsv() {
+    downloadText("glossary.csv", glossaryToCsv(terms), "text/csv;charset=utf-8");
   }
 
   return (
@@ -322,9 +323,13 @@ export function GlossaryManager() {
           />
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => void extractTerms()} disabled={extracting}>
+          <Button variant="outline" onClick={() => void extractTerms(false)} disabled={extracting}>
             {extracting ? <Loader2 className="animate-spin" /> : <Sparkles />}
             {extracting ? t.extracting : t.extractFromPair}
+          </Button>
+          <Button variant="outline" onClick={() => void extractTerms(true)} disabled={extracting}>
+            {extracting ? <Loader2 className="animate-spin" /> : <Sparkles />}
+            {extracting ? t.extracting : t.extractSourceOnly}
           </Button>
           <Button onClick={() => void saveCandidates()} disabled={saving || !selected.length}>
             {saving ? <Loader2 className="animate-spin" /> : <Save />}
@@ -352,7 +357,7 @@ export function GlossaryManager() {
         ) : null}
         {candidates.length
           ? candidates.map((candidate, index) => (
-              <div key={index} className="grid gap-3 rounded-none border border-[color:var(--line)] p-3 sm:grid-cols-[auto_1fr_1fr]">
+              <div key={index} className="grid gap-3 rounded-none border border-[color:var(--line)] p-3 sm:grid-cols-[auto_1fr_1fr_auto]">
                 <input
                   type="checkbox"
                   checked={candidate.selected}
@@ -385,6 +390,14 @@ export function GlossaryManager() {
                   />
                   <p className="text-muted-foreground text-xs">{candidate.reason}</p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t.deleted}
+                  onClick={() => setCandidates((items) => items.filter((_, i) => i !== index))}
+                >
+                  <X className="size-4" />
+                </Button>
               </div>
             ))
           : null}
@@ -453,6 +466,14 @@ export function GlossaryManager() {
           <Button variant="outline" onClick={exportJson}>
             <Download />
             {t.exportJson}
+          </Button>
+          <Button variant="outline" onClick={exportTmx}>
+            <Download />
+            {t.exportTmx}
+          </Button>
+          <Button variant="outline" onClick={exportCsv}>
+            <Download />
+            {t.exportCsv}
           </Button>
           <Button onClick={openCreate}>
             <Plus />

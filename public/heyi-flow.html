@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>合译流程 · 工坊</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" />
+  <style>
+    :root {
+      --paper: #f3eee4;
+      --ink: #1c1712;
+      --seal: #8b2e1f;
+      --gold: #d4a574;
+      --glass: rgba(12, 10, 8, 0.42);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #0b0a08;
+      color: var(--paper);
+      font-family: "Noto Sans SC", Tahoma, Arial, "Helvetica Neue", "Heiti SC", sans-serif;
+    }
+    #stage {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .hud {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .hud > * { pointer-events: auto; }
+    .brand {
+      position: absolute;
+      top: 22px;
+      left: 24px;
+      font-family: "Noto Serif SC", serif;
+      font-size: 22px;
+      letter-spacing: 0.18em;
+      color: var(--paper);
+    }
+    .brand small {
+      display: block;
+      margin-top: 4px;
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
+    .rail {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 56px;
+      background: var(--glass);
+      backdrop-filter: blur(18px);
+      border-left: 1px solid rgba(244, 239, 230, 0.12);
+      overflow: hidden;
+      transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .rail:hover, .rail:focus-within, .rail.is-open {
+      width: min(380px, 92vw);
+    }
+    .rail__tab {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 56px;
+      transform: translateY(-50%);
+      text-align: center;
+      color: var(--gold);
+      font-size: 18px;
+    }
+    .rail__body {
+      height: 100%;
+      padding: 28px 24px 28px 68px;
+      overflow: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .rail:hover .rail__body, .rail:focus-within .rail__body, .rail.is-open .rail__body {
+      opacity: 1;
+    }
+    .rail h2 {
+      font-family: "Noto Serif SC", serif;
+      font-size: 28px;
+      margin: 0 0 8px;
+    }
+    .rail .dek {
+      color: rgba(244, 239, 230, 0.62);
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+    .step {
+      border-top: 1px solid rgba(244, 239, 230, 0.1);
+      padding: 14px 0;
+      cursor: pointer;
+    }
+    .step.is-on { color: var(--gold); }
+    .step h3 {
+      font-family: "Noto Serif SC", serif;
+      font-size: 16px;
+      margin: 0 0 6px;
+    }
+    .step p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.75;
+      color: rgba(244, 239, 230, 0.68);
+    }
+    .hint {
+      position: absolute;
+      left: 50%;
+      bottom: 88px;
+      transform: translateX(-50%);
+      padding: 10px 16px;
+      border: 1px solid rgba(244, 239, 230, 0.16);
+      background: rgba(11, 10, 8, 0.45);
+      backdrop-filter: blur(12px);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      transition: opacity 1.2s ease;
+      white-space: nowrap;
+    }
+    .hint.is-dim { opacity: 0.18; }
+    .dock {
+      position: absolute;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+    .dock button {
+      border: 1px solid rgba(244, 239, 230, 0.2);
+      background: rgba(11, 10, 8, 0.4);
+      color: var(--paper);
+      padding: 8px 14px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+    .dock button:hover, .dock button.is-on {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212, 165, 116, 0.12);
+    }
+    .tag {
+      position: absolute;
+      transform: translate(-50%, -120%);
+      pointer-events: none;
+      font-family: "Noto Serif SC", serif;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: var(--paper);
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      opacity: 0.35;
+      transition: opacity 0.3s ease, color 0.3s ease;
+      white-space: nowrap;
+    }
+    .tag.is-on {
+      opacity: 1;
+      color: var(--gold);
+    }
+    @media (max-width: 720px) {
+      .rail { width: 48px; }
+      .rail:hover, .rail:focus-within, .rail.is-open { width: min(100%, 360px); }
+      .hint { bottom: 76px; font-size: 12px; white-space: normal; text-align: center; max-width: 80vw; }
+      .brand { font-size: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rail { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+  <div id="tags" class="hud" style="pointer-events:none"></div>
+  <div class="hud">
+    <div class="brand">合译<small>Cowork Translation</small></div>
+    <aside id="rail" class="rail" tabindex="0">
+      <div class="rail__tab"><i class="fa-solid fa-bars-staggered"></i></div>
+      <div class="rail__body">
+        <h2>合译流程</h2>
+        <p class="dek">先读一本书，再动笔。八个工位围着同一份文稿转：背景、护照、术语、删改、分段、语体、风险、签发。签发仍在人。</p>
+        <div id="steps"></div>
+      </div>
+    </aside>
+    <div id="hint" class="hint"><i class="fa-solid fa-hand-pointer"></i> 拖动环顾工坊 · 点击工位或侧栏</div>
+    <div class="dock">
+      <button type="button" id="prevBtn"><i class="fa-solid fa-chevron-left"></i> 上一工位</button>
+      <button type="button" id="autoBtn" class="is-on"><i class="fa-solid fa-rotate"></i> 巡游</button>
+      <button type="button" id="nextBtn">下一工位 <i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script>
+    (function () {
+      const STEPS = [
+        { id: "brief", title: "背景供给", icon: "fa-book-open", body: "写出书名、结构和当前所在部分。结构用词按你写的背景来译。" },
+        { id: "plan", title: "规划护照", icon: "fa-passport", body: "先立语域、读者、事实锚点与策略，再允许落笔。护照是译境，不是提纲。" },
+        { id: "term", title: "判定术语", icon: "fa-gem", body: "智能体先判断何为术语：专名、编章卷、制度词、机构与缩略词。普通动词不要入库。" },
+        { id: "edit", title: "人工删改", icon: "fa-user-pen", body: "候选由你勾选、改译、删除。术语表只锁已审核条目，最长匹配优先。" },
+        { id: "chunk", title: "分段翻译", icon: "fa-layer-group", body: "长文规划一次，按段起草并衔接上下文，再拼成完整译文。不必把一本书切碎上传。" },
+        { id: "style", title: "语体校审", icon: "fa-feather", body: "只动节奏、称谓与情态。事实锚点和锁定术语不得被“更通顺”换掉。" },
+        { id: "risk", title: "六类风险", icon: "fa-shield-halved", body: "术语、意义偏移、漏译增译、情态立场、语体、幻觉。高风险必须有对照证据。" },
+        { id: "sign", title: "译者签发", icon: "fa-stamp", body: "五个智能体只起草、只标风险。你改完再签，客户看见的是译员的判断。" }
+      ];
+
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const cheap = window.innerWidth < 720 || navigator.hardwareConcurrency < 4;
+      const lang = new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh";
+
+      const canvas = document.getElementById("stage");
+      const hint = document.getElementById("hint");
+      const rail = document.getElementById("rail");
+      const stepsBox = document.getElementById("steps");
+      const tagsBox = document.getElementById("tags");
+      const autoBtn = document.getElementById("autoBtn");
+
+      STEPS.forEach((step, i) => {
+        const el = document.createElement("article");
+        el.className = "step";
+        el.dataset.index = String(i);
+        el.innerHTML = "<h3><i class='fa-solid " + step.icon + "'></i> " + (i + 1) + " · " + step.title + "</h3><p>" + step.body + "</p>";
+        el.addEventListener("click", function () { focusStep(i, true); });
+        stepsBox.appendChild(el);
+      });
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !cheap, alpha: false, powerPreference: "high-performance" });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, cheap ? 1.25 : 1.75));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0b0a08);
+      scene.fog = new THREE.FogExp2(0x0b0a08, 0.042);
+
+      const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 80);
+      camera.position.set(8.4, 4.2, 10.2);
+
+      const hemi = new THREE.HemisphereLight(0xf4efe6, 0x1c1712, 0.55);
+      scene.add(hemi);
+      const key = new THREE.DirectionalLight(0xffd7a8, 1.15);
+      key.position.set(6, 10, 4);
+      scene.add(key);
+      const rim = new THREE.PointLight(0x8b2e1f, 8, 18);
+      rim.position.set(-4, 2.2, -3);
+      scene.add(rim);
+      const gold = new THREE.PointLight(0xd4a574, 6, 16);
+      gold.position.set(3, 1.4, 4);
+      scene.add(gold);
+
+      const floor = new THREE.Mesh(
+        new THREE.CircleGeometry(16, 64),
+        new THREE.MeshStandardMaterial({ color: 0x16130f, roughness: 0.92, metalness: 0.05 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      scene.add(floor);
+
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(5.2, 0.018, 8, 128),
+        new THREE.MeshStandardMaterial({ color: 0xd4a574, emissive: 0x3a2a18, roughness: 0.35 })
+      );
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 0.02;
+      scene.add(ring);
+
+      function makeBook() {
+        const group = new THREE.Group();
+        const cover = new THREE.Mesh(
+          new THREE.BoxGeometry(1.7, 0.08, 2.2),
+          new THREE.MeshStandardMaterial({ color: 0x8b2e1f, roughness: 0.45, metalness: 0.15 })
+        );
+        group.add(cover);
+        for (let i = 0; i < 7; i += 1) {
+          const page = new THREE.Mesh(
+            new THREE.BoxGeometry(1.55, 0.02, 2.05),
+            new THREE.MeshStandardMaterial({ color: 0xf3eee4, roughness: 0.8 })
+          );
+          page.position.y = 0.07 + i * 0.03;
+          page.rotation.y = (i - 3) * 0.015;
+          group.add(page);
+        }
+        const seal = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.18, 0.18, 0.04, 24),
+          new THREE.MeshStandardMaterial({ color: 0x8b2e1f, emissive: 0x4a150e, roughness: 0.3 })
+        );
+        seal.rotation.x = Math.PI / 2;
+        seal.position.set(0.45, 0.32, 0.55);
+        group.add(seal);
+        group.position.y = 1.15;
+        return group;
+      }
+
+      const book = makeBook();
+      scene.add(book);
+
+      const glyphCanvas = document.createElement("canvas");
+      glyphCanvas.width = 256;
+      glyphCanvas.height = 128;
+      const gctx = glyphCanvas.getContext("2d");
+      const glyphTex = new THREE.CanvasTexture(glyphCanvas);
+      const banner = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.4, 0.7),
+        new THREE.MeshBasicMaterial({ map: glyphTex, transparent: true })
+      );
+      banner.position.set(0, 2.55, 0);
+      scene.add(banner);
+
+      function paintGlyph(title) {
+        gctx.clearRect(0, 0, 256, 128);
+        gctx.fillStyle = "rgba(11,10,8,0.35)";
+        gctx.fillRect(0, 0, 256, 128);
+        gctx.fillStyle = "#d4a574";
+        gctx.font = "28px 'Noto Serif SC', serif";
+        gctx.textAlign = "center";
+        gctx.fillText(title, 128, 74);
+        glyphTex.needsUpdate = true;
+      }
+
+      function std(color, extra) {
+        return new THREE.MeshStandardMaterial(Object.assign({
+          color: color,
+          emissive: color,
+          emissiveIntensity: 0.12,
+          roughness: 0.46,
+          metalness: 0.16
+        }, extra || {}));
+      }
+
+      function labelCard(text, w, h, ink, paper) {
+        const c = document.createElement("canvas");
+        c.width = 160;
+        c.height = 80;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = paper || "#f3eee4";
+        ctx.fillRect(0, 0, 160, 80);
+        ctx.fillStyle = ink || "#8b2e1f";
+        ctx.font = "36px 'Noto Serif SC', serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 80, 42);
+        const tex = new THREE.CanvasTexture(c);
+        return new THREE.Mesh(
+          new THREE.PlaneGeometry(w, h),
+          new THREE.MeshBasicMaterial({ map: tex, transparent: true })
+        );
+      }
+
+      function add(group, mesh, x, y, z, rx, ry, rz) {
+        mesh.position.set(x || 0, y || 0, z || 0);
+        if (rx) mesh.rotation.x = rx;
+        if (ry) mesh.rotation.y = ry;
+        if (rz) mesh.rotation.z = rz;
+        group.add(mesh);
+        return mesh;
+      }
+
+      function stationBrief() {
+        const g = new THREE.Group();
+        const spine = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.62, 0.9), std(0x6b2a1c));
+        add(g, spine, 0, 0.08, 0);
+        const left = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.58, 0.86), std(0xf3eee4, { roughness: 0.82 }));
+        add(g, left, -0.28, 0.1, 0, 0, 0, 0.42);
+        const right = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.58, 0.86), std(0xf3eee4, { roughness: 0.82 }));
+        add(g, right, 0.28, 0.1, 0, 0, 0, -0.42);
+        const mark = labelCard("原文", 0.36, 0.18);
+        add(g, mark, 0.22, 0.28, 0.12, -0.2, -0.3, 0);
+        const slip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.02, 0.34), std(0xd4a574));
+        add(g, slip, -0.42, 0.36, 0.02, 0, 0, 0.2);
+        return g;
+      }
+
+      function stationPassport() {
+        const g = new THREE.Group();
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.08, 0.72), std(0x5c1f16)), 0, 0, 0);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.04, 0.64), std(0xf3eee4, { roughness: 0.8 })), 0, 0.06, 0);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.02, 0.08), std(0xd4a574)), 0, 0.09, 0.18);
+        const stamp = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.03, 20), std(0x8b2e1f, { metalness: 0.3 }));
+        add(g, stamp, 0.1, 0.12, -0.08, Math.PI / 2, 0, 0);
+        const word = labelCard("护照", 0.32, 0.16);
+        add(g, word, 0, 0.14, 0.2, -Math.PI / 2, 0, 0);
+        return g;
+      }
+
+      function stationTerm() {
+        const g = new THREE.Group();
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.56, 0.12), std(0x2c2418)), 0, 0.08, 0);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.5, 0.02), std(0xf3eee4)), 0.01, 0.08, 0.07);
+        const zh = labelCard("术语", 0.28, 0.14);
+        add(g, zh, 0.01, 0.18, 0.09);
+        const en = labelCard("TERM", 0.26, 0.12, "#1c1712", "#e8d5a3");
+        add(g, en, 0.22, -0.02, 0.16, 0, -0.4, 0.15);
+        const lens = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.03, 10, 22), std(0xd4a574, { metalness: 0.55 }));
+        add(g, lens, 0.28, 0.28, 0.22, Math.PI / 2.4, 0, 0);
+        const glass = new THREE.Mesh(new THREE.CircleGeometry(0.14, 20), std(0xf4efe6, { transparent: true, opacity: 0.28, roughness: 0.12 }));
+        add(g, glass, 0.28, 0.28, 0.22, Math.PI / 2.4, 0, 0);
+        add(g, new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.32, 8), std(0xa67c52)), 0.42, 0.06, 0.3, 0, 0, 0.7);
+        return g;
+      }
+
+      function stationEdit() {
+        const g = new THREE.Group();
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.02, 0.9), std(0xf3eee4, { roughness: 0.85 })), 0, 0, 0);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.012, 0.03), std(0x2c2418)), 0, 0.02, 0.18);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.012, 0.03), std(0x2c2418)), 0, 0.02, 0.06);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.014, 0.025), std(0x8b2e1f, { emissiveIntensity: 0.28 })), 0.02, 0.03, 0.06, 0, 0, -0.12);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.012, 0.03), std(0x2c2418)), -0.06, 0.02, -0.08);
+        const pen = new THREE.Group();
+        add(pen, new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.55, 10), std(0x8b2e1f)), 0, 0, 0);
+        add(pen, new THREE.Mesh(new THREE.ConeGeometry(0.028, 0.12, 8), std(0xd4a574)), 0, -0.32, 0);
+        add(g, pen, 0.22, 0.18, -0.02, 0, 0, 1.05);
+        const mark = labelCard("删改", 0.28, 0.14);
+        add(g, mark, -0.16, 0.04, -0.28, -Math.PI / 2, 0, 0);
+        return g;
+      }
+
+      function stationChunk() {
+        const g = new THREE.Group();
+        [-0.22, 0, 0.22].forEach(function (x, i) {
+          const page = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.02, 0.4), std(i === 1 ? 0xf3eee4 : 0xe8dcc8, { roughness: 0.8 }));
+          add(g, page, x, 0.02 + i * 0.04, 0.04 * (i - 1), 0, 0.08 * (i - 1), 0);
+        });
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 0.04), std(0xd4a574)), 0, 0.16, 0);
+        add(g, new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.1, 3), std(0xd4a574)), 0.16, 0.16, 0, 0, 0, -Math.PI / 2);
+        const src = labelCard("原文", 0.22, 0.11);
+        add(g, src, -0.22, 0.1, 0.12, -0.4, 0.2, 0);
+        const dst = labelCard("译文", 0.22, 0.11, "#f3eee4", "#8b2e1f");
+        add(g, dst, 0.24, 0.14, -0.08, -0.4, -0.2, 0);
+        return g;
+      }
+
+      function stationStyle() {
+        const g = new THREE.Group();
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.02, 0.44), std(0xf3eee4)), -0.18, 0, 0.04);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.02, 0.44), std(0xe8d5a3)), 0.2, 0.04, -0.04);
+        add(g, new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.62, 8), std(0x4a3f32)), 0.08, 0.28, 0.1, 0, 0, 0.35);
+        add(g, new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.1, 8), std(0xd4a574)), 0.2, 0.02, 0.16, 0, 0, 0.35);
+        const barb = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.01, 0.08), std(0xf4efe6));
+        add(g, barb, -0.06, 0.48, 0.04, 0.2, 0, 0.4);
+        const barb2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.01, 0.07), std(0xe8dcc8));
+        add(g, barb2, -0.02, 0.4, 0.08, 0.25, 0, 0.35);
+        const word = labelCard("语体", 0.24, 0.12);
+        add(g, word, -0.18, 0.06, 0.16, -Math.PI / 2, 0, 0);
+        return g;
+      }
+
+      function stationRisk() {
+        const g = new THREE.Group();
+        add(g, new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.06, 6), std(0x3a2a18, { metalness: 0.25 })), 0, 0.02, 0);
+        const marks = ["术", "义", "漏", "态", "体", "幻"];
+        marks.forEach(function (ch, i) {
+          const col = i % 3;
+          const row = Math.floor(i / 3);
+          const cube = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.14), std(0x8b2e1f, { emissiveIntensity: 0.22 }));
+          add(g, cube, (col - 1) * 0.18, 0.1, (row - 0.5) * 0.18);
+          const face = labelCard(ch, 0.12, 0.08, "#f3eee4", "#8b2e1f");
+          add(g, face, (col - 1) * 0.18, 0.15, (row - 0.5) * 0.18, -Math.PI / 2, 0, 0);
+        });
+        return g;
+      }
+
+      function stationSign() {
+        const g = new THREE.Group();
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.02, 0.8), std(0xf3eee4, { roughness: 0.84 })), 0, 0, 0);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.012, 0.025), std(0x2c2418)), -0.06, 0.02, 0.16);
+        add(g, new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.012, 0.025), std(0x2c2418)), -0.08, 0.02, 0.06);
+        const wax = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.06, 22), std(0x8b2e1f, { metalness: 0.28, emissiveIntensity: 0.3 }));
+        add(g, wax, 0.16, 0.05, -0.14);
+        add(g, new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.22, 10), std(0xa67c52)), 0.16, 0.18, -0.14);
+        add(g, new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.04, 16), std(0xd4a574)), 0.16, 0.3, -0.14);
+        const word = labelCard("签发", 0.26, 0.13);
+        add(g, word, -0.12, 0.04, -0.22, -Math.PI / 2, 0, 0);
+        return g;
+      }
+
+      const makers = [stationBrief, stationPassport, stationTerm, stationEdit, stationChunk, stationStyle, stationRisk, stationSign];
+      const hues = [0xc4a574, 0x8b2e1f, 0xe8d5a3, 0xf3eee4, 0xa67c52, 0xd4c4a0, 0xff6b5a, 0xd4a574];
+
+      const nodes = [];
+      const labels = [];
+      STEPS.forEach(function (step, i) {
+        const angle = (i / STEPS.length) * Math.PI * 2 - Math.PI / 2;
+        const r = 5.2;
+        const mesh = makers[i]();
+        mesh.position.set(Math.cos(angle) * r, 1.15 + Math.sin(i) * 0.15, Math.sin(angle) * r);
+        mesh.userData.index = i;
+        mesh.userData.baseY = mesh.position.y;
+        mesh.lookAt(0, mesh.position.y, 0);
+        mesh.rotateY(Math.PI);
+        mesh.scale.setScalar(1.35);
+        scene.add(mesh);
+        const glow = new THREE.Mesh(
+          new THREE.SphereGeometry(0.62, 16, 12),
+          new THREE.MeshBasicMaterial({ color: hues[i], transparent: true, opacity: 0.07 })
+        );
+        mesh.add(glow);
+        nodes.push(mesh);
+
+        const tag = document.createElement("div");
+        tag.className = "tag";
+        tag.textContent = (i + 1) + " " + step.title;
+        tagsBox.appendChild(tag);
+        labels.push(tag);
+      });
+
+      const curvePts = nodes.map(function (n) { return n.position.clone(); });
+      curvePts.push(nodes[0].position.clone());
+      const curve = new THREE.CatmullRomCurve3(curvePts, true);
+      const flowCount = cheap ? 90 : 180;
+      const flowGeo = new THREE.BufferGeometry();
+      const flowPos = new Float32Array(flowCount * 3);
+      const flowProg = [];
+      for (let i = 0; i < flowCount; i += 1) {
+        flowProg[i] = i / flowCount;
+        const p = curve.getPointAt(flowProg[i]);
+        flowPos[i * 3] = p.x;
+        flowPos[i * 3 + 1] = p.y;
+        flowPos[i * 3 + 2] = p.z;
+      }
+      flowGeo.setAttribute("position", new THREE.BufferAttribute(flowPos, 3));
+      const flow = new THREE.Points(
+        flowGeo,
+        new THREE.PointsMaterial({ color: 0xd4a574, size: 0.05, transparent: true, opacity: 0.7, depthWrite: false })
+      );
+      scene.add(flow);
+
+      const dustCount = cheap ? 80 : 160;
+      const dustGeo = new THREE.BufferGeometry();
+      const dustPos = new Float32Array(dustCount * 3);
+      for (let i = 0; i < dustCount; i += 1) {
+        dustPos[i * 3] = (Math.random() - 0.5) * 18;
+        dustPos[i * 3 + 1] = Math.random() * 8;
+        dustPos[i * 3 + 2] = (Math.random() - 0.5) * 18;
+      }
+      dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
+      scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0xf4efe6, size: 0.02, transparent: true, opacity: 0.22 })));
+
+      const rig = {
+        target: new THREE.Vector3(0, 1.1, 0),
+        spherical: new THREE.Spherical(12.2, 1.18, 0.55),
+        dragging: false,
+        lastX: 0,
+        lastY: 0,
+        auto: reduced ? 0 : 0.00022
+      };
+
+      function applyRig() {
+        const off = new THREE.Vector3().setFromSpherical(rig.spherical);
+        camera.position.copy(rig.target).add(off);
+        camera.lookAt(rig.target);
+      }
+      applyRig();
+
+      canvas.addEventListener("pointerdown", function (e) {
+        rig.dragging = true;
+        rig.lastX = e.clientX;
+        rig.lastY = e.clientY;
+        canvas.setPointerCapture(e.pointerId);
+        setHint("环顾中 · 松开后工坊继续慢转");
+      });
+      canvas.addEventListener("pointermove", function (e) {
+        if (!rig.dragging) return;
+        const dx = e.clientX - rig.lastX;
+        const dy = e.clientY - rig.lastY;
+        rig.lastX = e.clientX;
+        rig.lastY = e.clientY;
+        rig.spherical.theta -= dx * 0.005;
+        rig.spherical.phi = THREE.MathUtils.clamp(rig.spherical.phi + dy * 0.004, 0.4, 1.45);
+      });
+      canvas.addEventListener("pointerup", function () { rig.dragging = false; });
+      canvas.addEventListener("wheel", function (e) {
+        e.preventDefault();
+        rig.spherical.radius = THREE.MathUtils.clamp(rig.spherical.radius + e.deltaY * 0.01, 7, 18);
+      }, { passive: false });
+
+      const ray = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      let hover = -1;
+      let current = 0;
+      let touring = !reduced;
+      let lastTour = 0;
+
+      function projectLabel(mesh, el) {
+        const v = mesh.position.clone().project(camera);
+        const x = (v.x * 0.5 + 0.5) * window.innerWidth;
+        const y = (-v.y * 0.5 + 0.5) * window.innerHeight;
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+        el.style.display = v.z > 1 ? "none" : "block";
+      }
+
+      function setHint(text) {
+        hint.innerHTML = "<i class='fa-solid fa-circle-info'></i> " + text;
+        hint.classList.remove("is-dim");
+        window.clearTimeout(setHint.tid);
+        setHint.tid = window.setTimeout(function () { hint.classList.add("is-dim"); }, 3600);
+      }
+
+      function focusStep(index, fromUser) {
+        current = (index + STEPS.length) % STEPS.length;
+        const node = nodes[current];
+        paintGlyph(STEPS[current].title);
+        document.querySelectorAll(".step").forEach(function (el, i) {
+          el.classList.toggle("is-on", i === current);
+        });
+        labels.forEach(function (el, i) { el.classList.toggle("is-on", i === current); });
+        nodes.forEach(function (m, i) {
+          gsap.to(m.scale, { x: i === current ? 1.22 : 1, y: i === current ? 1.22 : 1, z: i === current ? 1.22 : 1, duration: 0.8, ease: "power2.out" });
+          m.traverse(function (child) {
+            if (child.material && child.material.emissive) {
+              child.material.emissiveIntensity = i === current ? 0.4 : 0.12;
+            }
+          });
+        });
+        const look = node.position.clone();
+        gsap.to(rig.target, { x: look.x * 0.25, y: 1.15, z: look.z * 0.25, duration: 1.6, ease: "power2.inOut" });
+        const theta = Math.atan2(node.position.x, node.position.z);
+        gsap.to(rig.spherical, { theta: theta + 0.55, duration: 1.8, ease: "power2.inOut" });
+        if (fromUser) {
+          touring = false;
+          autoBtn.classList.remove("is-on");
+          setHint("停在「" + STEPS[current].title + "」· 再点巡游可继续");
+          if (window.innerWidth < 720) rail.classList.add("is-open");
+        }
+      }
+
+      canvas.addEventListener("click", function (e) {
+        if (rig.dragging) return;
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        ray.setFromCamera(mouse, camera);
+        const hit = ray.intersectObjects(nodes, true)[0];
+        if (hit) {
+          let obj = hit.object;
+          while (obj && obj.userData.index == null) obj = obj.parent;
+          if (obj) focusStep(obj.userData.index, true);
+        }
+      });
+
+      canvas.addEventListener("pointermove", function (e) {
+        if (rig.dragging) return;
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        ray.setFromCamera(mouse, camera);
+        const hit = ray.intersectObjects(nodes, true)[0];
+        let next = -1;
+        if (hit) {
+          let obj = hit.object;
+          while (obj && obj.userData.index == null) obj = obj.parent;
+          if (obj) next = obj.userData.index;
+        }
+        if (next !== hover) {
+          hover = next;
+          canvas.style.cursor = next >= 0 ? "pointer" : "grab";
+        }
+      });
+
+      document.getElementById("prevBtn").addEventListener("click", function () { focusStep(current - 1, true); });
+      document.getElementById("nextBtn").addEventListener("click", function () { focusStep(current + 1, true); });
+      autoBtn.addEventListener("click", function () {
+        touring = !touring;
+        autoBtn.classList.toggle("is-on", touring);
+        setHint(touring ? "工坊自行巡游 · 速度很慢" : "已暂停巡游 · 可点工位细看");
+      });
+
+      window.setTimeout(function () { hint.classList.add("is-dim"); }, 4200);
+      focusStep(0, false);
+      paintGlyph(lang === "en" ? "Cowork Flow" : "合译流程");
+
+      const clock = new THREE.Clock();
+      function tick() {
+        const t = clock.getElapsedTime();
+        if (!rig.dragging && !reduced) rig.spherical.theta += rig.auto;
+        book.rotation.y = Math.sin(t * 0.12) * 0.18;
+        book.position.y = 1.15 + Math.sin(t * 0.35) * 0.05;
+        banner.quaternion.copy(camera.quaternion);
+        const attr = flow.geometry.attributes.position;
+        for (let i = 0; i < flowCount; i += 1) {
+          flowProg[i] = (flowProg[i] + 0.00018) % 1;
+          const p = curve.getPointAt(flowProg[i]);
+          attr.setXYZ(i, p.x, p.y + Math.sin(t + i) * 0.02, p.z);
+        }
+        attr.needsUpdate = true;
+        nodes.forEach(function (m, i) {
+          m.position.y = m.userData.baseY + Math.sin(t * 0.45 + i) * 0.05;
+          m.rotation.y += 0.0009;
+          projectLabel(m, labels[i]);
+        });
+        if (touring && !reduced && t - lastTour > 7.5) {
+          lastTour = t;
+          focusStep(current + 1, false);
+        }
+        applyRig();
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+
+      window.addEventListener("resize", function () {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    })();
+  </script>
+</body>
+</html>

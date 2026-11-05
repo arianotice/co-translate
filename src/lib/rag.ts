@@ -24,6 +24,17 @@ function tokenize(value: string) {
     .filter((token) => token.length >= 2);
 }
 
+const PINNED = new Set(["planner-book-bian", "trans-legal-structure", "trans-legal"]);
+
+function shouldPin(source: string, chunk: RagChunk) {
+  const hay = tokenize(source);
+  if (PINNED.has(chunk.id) && hay.some((token) => ["编", "章", "卷", "部", "篇", "结构"].includes(token))) {
+    return true;
+  }
+  const bag = tokenize(`${chunk.title} ${chunk.tags.join(" ")} ${chunk.text}`);
+  return PINNED.has(chunk.id) && hay.some((token) => bag.includes(token));
+}
+
 export function retrieveRag(agent: AgentId, source: string, domain = "通用", limit = 3) {
   const hay = tokenize(`${source} ${domain}`);
   const scored = INDEX.filter((chunk) => chunk.agents.includes(agent))
@@ -38,11 +49,14 @@ export function retrieveRag(agent: AgentId, source: string, domain = "通用", l
     .filter((item) => item.score > 0)
     .sort((a, b) => b.score - a.score || a.chunk.id.localeCompare(b.chunk.id));
 
-  const picked = (scored.length ? scored : INDEX.filter((chunk) => chunk.agents.includes(agent)).map((chunk) => ({ chunk, score: 1 })))
-    .slice(0, limit)
-    .map((item) => item.chunk);
+  const ranked = (scored.length
+    ? scored
+    : INDEX.filter((chunk) => chunk.agents.includes(agent)).map((chunk) => ({ chunk, score: 1 }))
+  ).map((item) => item.chunk);
 
-  return picked;
+  const pins = INDEX.filter((chunk) => chunk.agents.includes(agent) && shouldPin(source, chunk));
+  const rest = ranked.filter((chunk) => !pins.some((pin) => pin.id === chunk.id));
+  return [...pins, ...rest].slice(0, pins.length ? limit + 1 : limit);
 }
 
 export function formatRag(chunksToUse: RagChunk[]) {

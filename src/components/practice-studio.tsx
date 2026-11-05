@@ -37,6 +37,7 @@ import { RISK_CATEGORIES } from "@/lib/agents";
 import { loadClientSettings, settingsPayload, useClientSettings } from "@/lib/client-settings";
 import { matchDirectionForSource } from "@/lib/direction";
 import { DEFAULT_WORKSHOP_DOMAINS } from "@/lib/examples";
+import { emptyBriefing, type SourceBriefing } from "@/lib/briefing";
 import { uniqueDomains } from "@/lib/glossary";
 import { domainLabel, useLocale } from "@/lib/locale";
 import { SOURCE_ACCEPT, readSourceFile } from "@/lib/read-source";
@@ -186,6 +187,7 @@ export function PracticeStudio({ initialTerms }: { initialTerms: GlossaryTerm[] 
   const [student, setStudent] = useState("");
   const [domain, setDomain] = useState("通用");
   const [direction, setDirection] = useState<TranslateDirection>("zh-en");
+  const [briefing, setBriefing] = useState<SourceBriefing>(emptyBriefing());
   const [busy, setBusy] = useState(false);
   const [polishing, setPolishing] = useState(false);
   const [askPolish, setAskPolish] = useState(false);
@@ -275,6 +277,7 @@ export function PracticeStudio({ initialTerms }: { initialTerms: GlossaryTerm[] 
           student,
           domain,
           direction,
+          briefing,
           ...settingsPayload(settings),
           temperature: 0.2,
         }),
@@ -418,6 +421,34 @@ export function PracticeStudio({ initialTerms }: { initialTerms: GlossaryTerm[] 
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="space-y-2 rounded-none border border-[color:var(--line)] bg-[color:var(--fill-ghost)] p-3">
+            <div>
+              <p className="text-sm font-medium">{t.briefingTitle}</p>
+              <p className="text-muted-foreground mt-1 text-xs leading-6">{t.briefingHint}</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>{t.briefingBook}</Label>
+                <input
+                  value={briefing.title}
+                  onChange={(event) => setBriefing((prev) => ({ ...prev, title: event.target.value }))}
+                  placeholder={t.briefingBookPh}
+                  className="border-input bg-background h-9 w-full border px-3 text-sm outline-none"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t.briefingStructure}</Label>
+                <input
+                  value={briefing.structure}
+                  onChange={(event) => setBriefing((prev) => ({ ...prev, structure: event.target.value }))}
+                  placeholder={t.briefingStructurePh}
+                  className="border-input bg-background h-9 w-full border px-3 text-sm outline-none"
+                />
+              </div>
+            </div>
+            <p className="text-muted-foreground text-xs leading-6">{t.longTextHint}</p>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">

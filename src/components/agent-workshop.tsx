@@ -29,6 +29,7 @@ import { RISK_CATEGORIES } from "@/lib/agents";
 import { loadClientSettings, settingsPayload, useClientSettings } from "@/lib/client-settings";
 import { matchDirectionForSource } from "@/lib/direction";
 import { DEFAULT_WORKSHOP_DOMAINS } from "@/lib/examples";
+import { emptyBriefing, type SourceBriefing } from "@/lib/briefing";
 import { uniqueDomains } from "@/lib/glossary";
 import { saveLastPair } from "@/lib/last-pair";
 import { domainLabel, useLocale } from "@/lib/locale";
@@ -137,6 +138,8 @@ export function AgentWorkshop({
   const [text, setText] = useState(initialText);
   const [domain, setDomain] = useState("通用");
   const [direction, setDirection] = useState<TranslateDirection>("zh-en");
+  const [briefing, setBriefing] = useState<SourceBriefing>(emptyBriefing());
+  const [chunkLabel, setChunkLabel] = useState("");
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<Record<AgentId, AgentStatus>>({
     planner: "idle",
@@ -190,6 +193,7 @@ export function AgentWorkshop({
     setDelivery("");
     setSigned(false);
     setNotice("");
+    setChunkLabel("");
   }
 
   async function run() {
@@ -210,6 +214,7 @@ export function AgentWorkshop({
           domain,
           direction,
           comparePrompts: false,
+          briefing,
           ...settingsPayload(settings),
           temperature: 0.2,
         }),
@@ -246,6 +251,12 @@ export function AgentWorkshop({
             if (next.revised) setDelivery(next.revised);
           }
           if (payload.agent === "risk") setRisk(payload.output as RiskOutput);
+        }
+        if (event === "chunk") {
+          const chunk = data as { index?: number; total?: number };
+          if (chunk.index && chunk.total) {
+            setChunkLabel(t.chunkProgress.replace("{n}", String(chunk.index)).replace("{total}", String(chunk.total)));
+          }
         }
         if (event === "access") {
           if ((data as { mode?: string }).mode === "trial") setTrialUsed(true);
@@ -335,6 +346,42 @@ export function AgentWorkshop({
                 )}
               </div>
             </div>
+            <div className="space-y-2 rounded-none border border-[color:var(--line)] bg-[color:var(--fill-ghost)] p-3">
+              <div>
+                <p className="text-sm font-medium">{t.briefingTitle}</p>
+                <p className="text-muted-foreground mt-1 text-xs leading-6">{t.briefingHint}</p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label>{t.briefingBook}</Label>
+                  <input
+                    value={briefing.title}
+                    onChange={(event) => setBriefing((prev) => ({ ...prev, title: event.target.value }))}
+                    placeholder={t.briefingBookPh}
+                    className="border-input bg-background h-9 w-full border px-3 text-sm outline-none"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>{t.briefingStructure}</Label>
+                  <input
+                    value={briefing.structure}
+                    onChange={(event) => setBriefing((prev) => ({ ...prev, structure: event.target.value }))}
+                    placeholder={t.briefingStructurePh}
+                    className="border-input bg-background h-9 w-full border px-3 text-sm outline-none"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t.briefingNotes}</Label>
+                <Textarea
+                  value={briefing.notes}
+                  onChange={(event) => setBriefing((prev) => ({ ...prev, notes: event.target.value }))}
+                  placeholder={t.briefingNotesPh}
+                  className="min-h-20 bg-background text-sm leading-6"
+                />
+              </div>
+            </div>
+            <p className="text-muted-foreground text-xs leading-6">{t.longTextHint}</p>
             <Textarea
               value={text}
               onChange={(event) => applySource(event.target.value)}
@@ -363,6 +410,7 @@ export function AgentWorkshop({
               </label>
               <div className="inline-flex items-center gap-2">
                 {busy ? <ThinkingOrb state="working" size={20} theme="dark" /> : null}
+                {chunkLabel ? <span className="text-muted-foreground text-xs">{chunkLabel}</span> : null}
                 <Button onClick={() => void run()} disabled={busy || (!hasOwnKey && trialUsed)} size="lg">
                   {busy ? <Loader2 className="animate-spin" /> : <Sparkles />}
                   {busy ? t.running : t.run}

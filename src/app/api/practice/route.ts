@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     model?: string;
     temperature?: number;
     direction?: "zh-en" | "en-zh";
+    briefing?: { title?: string; structure?: string; notes?: string };
   };
 
   const source = body.source?.trim() ?? "";
@@ -72,6 +73,11 @@ export async function POST(request: Request) {
           student,
           domain: body.domain,
           direction: body.direction,
+          briefing: {
+            title: body.briefing?.title ?? "",
+            structure: body.briefing?.structure ?? "",
+            notes: body.briefing?.notes ?? "",
+          },
           glossary,
           usedHostKey: access.usedHostKey,
           settings: {

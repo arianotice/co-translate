@@ -7,6 +7,7 @@ import { Languages } from "lucide-react";
 
 import { QuietLink } from "@/components/quiet-link";
 import { SiteFooter } from "@/components/site-footer";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useLocale } from "@/lib/locale";
 
 const VIDEO =
@@ -87,6 +88,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 );
               })}
             </nav>
+            <ThemeToggle />
             <button
               type="button"
               className="icon-flow site-nav__cta site-nav__desktop-cta locale-cta"
@@ -135,6 +137,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {item.label}
             </a>
           ))}
+          <ThemeToggle />
           <button
             type="button"
             className="icon-flow site-nav__cta locale-cta"

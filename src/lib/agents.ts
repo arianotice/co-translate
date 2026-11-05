@@ -33,24 +33,30 @@ function ragBlock(rag?: string) {
   return `\n\n参考知识（只约束方法，不得据此添加源文没有的事实）：\n${rag.trim()}`;
 }
 
+function briefingBlock(briefing?: string) {
+  if (!briefing?.trim()) return "";
+  return `\n\n${briefing.trim()}`;
+}
+
 export function plannerMessages(
   source: string,
   domain: string,
   direction: TranslateDirection,
   rag?: string,
+  briefing?: string,
 ) {
   return [
     {
       role: "system" as const,
       content:
-        "你是翻译规划助手。先出翻译护照，不要直接翻译。只输出一个 JSON 对象，不要 Markdown，不要解释。",
+        "你是翻译规划助手。先出翻译护照，不要直接翻译。只输出一个 JSON 对象，不要 Markdown，不要解释。译者背景供给优先于常识，结构用词按背景理解。",
     },
     {
       role: "user" as const,
       content: `业务域：${domain || "通用"}
 方向：${sourceLang(direction)} → ${targetLang(direction)}（只做中英互译）
 
-对源文做翻译前分析。先锁定事实，再谈策略。事实锚点包括日期、数字、专名、机构、职务、引语、否定与逻辑关系。${ragBlock(rag)}
+对源文做翻译前分析。先锁定事实，再谈策略。事实锚点包括日期、数字、专名、机构、职务、引语、否定、篇章结构单位（编/章/卷）与逻辑关系。${briefingBlock(briefing)}${ragBlock(rag)}
 
 输出 JSON：
 {
@@ -78,6 +84,8 @@ export function translatorMessages(
   domain: string,
   direction: TranslateDirection,
   rag?: string,
+  briefing?: string,
+  cohesion?: string,
 ) {
   if (variant === "p1") {
     return [
@@ -115,8 +123,9 @@ export function translatorMessages(
         "1. Mandatory glossary renderings must be used exactly. If a high-risk name has no glossary hit, mark [VERIFY] — do not invent an official name.",
         "2. Preserve fact anchors: dates, numbers, names, titles, quotes, negation, and logical relations.",
         "3. Do not add claims that are not in the source. Do not drop commitments or hedges.",
-        "4. Follow the passport register and audience.",
+        "4. Follow the passport register and audience. Structure words follow the briefing.",
         "5. Language polish may not override locked terms or fact anchors.",
+        "6. If this is one section of a longer text, translate only this section and keep continuity with the previous tail.",
         "【Audience】Use the passport audience; if missing, keep a register suitable for publication.",
         "【Check】Before finishing, confirm facts and locked terms still stand.",
       ].join("\n"),
@@ -131,7 +140,7 @@ ${plannerBrief(planner)}
 
 术语表（必须遵守）：
 ${formatMatchedTerms(matches)}
-${ragBlock(rag)}
+${briefingBlock(briefing)}${ragBlock(rag)}${cohesion ? `\n\n上一节译文末尾（只为衔接，不要重译）：\n${cohesion}` : ""}
 
 【Source text】
 ${source}`,
@@ -145,6 +154,7 @@ export function styleMessages(
   matches: TermMatch[],
   planner: PlannerOutput | null,
   rag?: string,
+  briefing?: string,
 ) {
   return [
     {
@@ -164,7 +174,7 @@ ${source}
 
 初稿：
 ${draft}
-${ragBlock(rag)}
+${briefingBlock(briefing)}${ragBlock(rag)}
 
 输出：
 {
@@ -182,6 +192,7 @@ export function riskMessages(
   matches: TermMatch[],
   planner: PlannerOutput | null,
   rag?: string,
+  briefing?: string,
 ) {
   return [
     {
@@ -201,7 +212,7 @@ ${source}
 
 待审译文：
 ${draft}
-${ragBlock(rag)}
+${briefingBlock(briefing)}${ragBlock(rag)}
 
 输出：
 {
