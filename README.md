@@ -4,7 +4,7 @@
 
 合译不是一键出稿的机器翻译。规划先立翻译护照，术语只锁已审核条目，翻译按约束起草，语体润色但不改事实，风险过六关后再由你签发。练习页把原文、参考译文和自己的译文放在同一张桌上，从翻译批评与鉴赏对照批改，再由你决定要不要写出一篇跟你语体一致、对等更高的优化稿。
 
-需要 Node.js 20+ 和 npm。仓库：[zyy030920/waffo-test](https://github.com/zyy030920/waffo-test)。
+需要 Node.js 20+ 和 npm。仓库：[zyy030920/waffo-test](https://github.com/zyy030920/co-translate)。
 
 工序、文案、术语和密钥约定见 [GUIDELINE.md](./GUIDELINE.md)。
 
@@ -14,7 +14,7 @@
 - **翻译练习**：上传原文、参考译文和自己的译文，五智能体批改；点「优化」后再决定要不要产出优化稿。
 - **术语表**：机构名与缩略词已入库。还可上传、从原文与译文提取候选，审核后才写入。
 - **博客**：四类各五篇，从译论抽出工坊用得上的方法，不代替读原书。
-- **一次免费体验**：站点 MiniMax 承担一次五智能体运行。之后在设置填写你自己的密钥（海螺、深度求索、智谱、通义千问，或任意兼容接口）。密钥只存在这台浏览器。
+- **一次免费体验**：站点承担一次五智能体运行。之后在设置填写你自己的密钥。密钥只存在这台浏览器。
 
 ## 页面
 
@@ -36,8 +36,8 @@
 ## 本机运行
 
 ```bash
-git clone https://github.com/zyy030920/waffo-test.git
-cd waffo-test
+git clone https://github.com/zyy030920/co-tranlste.git
+cd co-translate
 npm install
 ```
 
@@ -47,7 +47,7 @@ npm install
 cp .env.example .env.local
 ```
 
-编辑 `.env.local`，只填**站点体验额度**（设计者自己的 MiniMax Key）。不要把这枚密钥写进仓库。
+编辑 `.env.local`。不要把这枚密钥写进仓库。
 
 ```
 MINIMAX_API_KEY=
