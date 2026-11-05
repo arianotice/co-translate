@@ -76,12 +76,10 @@
 
 | 谁的密钥 | 放哪里 | 用途 |
 | --- | --- | --- |
-| 站点体验 MiniMax | 服务器 `.env.local` 的 `MINIMAX_API_KEY` | 每位使用者一次五智能体 |
+| 站点体验 | 服务器 | 每位使用者一次五智能体服务 |
 | 使用者自己的密钥 | 浏览器本地 | 体验用完后的实战和练习 |
 
-支持：海螺国际 / 海螺国内、深度求索、智谱、通义千问、自定义兼容接口。解析逻辑在 `src/lib/providers.ts` 和 `src/lib/model-access.ts`。体验 cookie：`duici_trial_used`。
-
-国际 Key 打 `https://api.minimax.io/v1`。国内 Key 打 `https://api.minimaxi.com/v1`。`2049 invalid api key` 多半是国际/国内站或 `/anthropic` 地址用错。
+支持：MiniMax、深度求索、智谱、通义千问、自定义兼容接口。解析逻辑在 `src/lib/providers.ts` 和 `src/lib/model-access.ts`。体验 cookie：`duici_trial_used`。
 
 ## 改代码时
 
