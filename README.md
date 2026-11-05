@@ -4,7 +4,7 @@
 
 合译是给翻译家和翻译学习者用的中英互译工坊：规划、术语、翻译、语体、风险各管一段，交稿仍由人签。
 
-客户丢来一部三编的书，只译其中一编。机器常把「下编」写成 Part Two。你先写清书名和全书结构，合译按你给的背景译「编」，术语由模型初判、你删改后再锁，长文一次导入、按段译完再拼合——不必把书切碎上传。
+客户丢来一部三编的书，只译其中一编。机器常把“下编”写成 "Part Two"。你先写清书名和全书结构，合译按你给的背景译“编”，术语由模型初判、你删改后再锁，长文一次导入、按段译完再拼合——不必把书切碎上传。
 
 仓库：[arianotice/co-translate](https://github.com/arianotice/co-translate) · 约定见 [GUIDELINE.md](./GUIDELINE.md)
 
@@ -74,7 +74,7 @@
 
 ```
 co-translate/
-├── demo.html                 静态工坊演示（可直接用浏览器打开）
+├── demo.html                 静态工坊演示
 ├── GUIDELINE.md              工序、文案、术语、密钥约定
 ├── package.json
 ├── data/
@@ -120,7 +120,7 @@ MINIMAX_BASE_URL=https://api.minimax.io/v1
 MINIMAX_MODEL=MiniMax-M3
 ```
 
-国际站用 `https://api.minimax.io/v1`。国内站用 `https://api.minimaxi.com/v1`。不要填 `/anthropic`。
+国际站用 `https://api.minimax.io/v1`。国内站用 `https://api.minimaxi.com/v1`。
 
 ```bash
 npm run dev
@@ -128,7 +128,7 @@ npm run dev
 
 浏览器打开 [http://127.0.0.1:43173](http://127.0.0.1:43173)。
 
-使用者自己的密钥在「设置」填写，只存在这台浏览器。
+使用者自己的密钥在「设置」填写，只存在你的浏览器。
 
 ```bash
 npm run build
