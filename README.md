@@ -4,6 +4,8 @@
 
 合译不是一键出稿的机器翻译。规划先立翻译护照，术语只锁已审核条目，翻译按约束起草，语体润色但不改事实，风险过六关后再由你签发。练习页把原文、参考译文和自己的译文放在同一张桌上，从翻译批评与鉴赏对照批改，再由你决定要不要写出一篇跟你语体一致、对等更高的优化稿。
 
+需要 Node.js 20+ 和 npm。仓库：[zyy030920/co-translate](https://github.com/zyy030920/co-translate)。
+
 工序、文案、术语和密钥约定见 [GUIDELINE.md](./GUIDELINE.md)。
 
 ## 能做什么
@@ -34,7 +36,7 @@
 ## 本机运行
 
 ```bash
-git clone https://github.com/zyy030920/co-tranlste.git
+git clone https://github.com/zyy030920/co-translate.git
 cd co-translate
 npm install
 ```
@@ -45,7 +47,7 @@ npm install
 cp .env.example .env.local
 ```
 
-编辑 `.env.local`。不要把这枚密钥写进仓库。
+编辑 `.env.local`，只填**站点体验额度**。不要把这枚密钥写进仓库。
 
 ```
 MINIMAX_API_KEY=

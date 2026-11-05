@@ -1,7 +1,12 @@
 {
-  "name": "duici",
+  "name": "co-translate",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zyy030920/co-translate.git"
+  },
+  "homepage": "https://github.com/zyy030920/co-translate",
   "scripts": {
     "dev": "next dev --port 43173 --hostname 127.0.0.1",
     "build": "next build",
