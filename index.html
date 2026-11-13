@@ -194,10 +194,7 @@
       });
 
       function flowHref() {
-        if (location.protocol === "file:") {
-          return /\/public\//.test(location.pathname) ? "heyi-flow.html" : "public/heyi-flow.html";
-        }
-        return "heyi-flow.html";
+        return /\/public\//.test(location.pathname) ? "heyi-flow.html" : "public/heyi-flow.html";
       }
       var href = flowHref();
       document.querySelectorAll(".js-flow").forEach(function (el) { el.setAttribute("href", href); });
