@@ -1,5 +1,4 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import chunksJson from "../../data/rag/chunks.json";
 
 import type { AgentId } from "./types";
 
@@ -13,9 +12,13 @@ export type RagChunk = {
   text: string;
 };
 
-const INDEX = JSON.parse(
-  readFileSync(path.join(process.cwd(), "data", "rag", "chunks.json"), "utf8"),
-) as RagChunk[];
+/**
+ * RAG 索引在构建时直接打包进函数 bundle（不再用 fs 运行时读取）。
+ *
+ * 这样 GitHub Pages / Vercel 等静态或 serverless 环境下都可用，
+ * 也避免 process.cwd() 在 serverless 运行时指向不存在的数据目录。
+ */
+const INDEX = chunksJson as unknown as RagChunk[];
 
 function tokenize(value: string) {
   return value

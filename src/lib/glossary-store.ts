@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
 import path from "path";
 
+import defaultTerms from "../../data/glossary.json";
+
 import type { GlossaryTerm } from "./types";
 
 /**
@@ -25,12 +27,22 @@ function resolveDataPath(): string {
 
 const DATA_PATH = resolveDataPath();
 
+/**
+ * 首次访问时初始化存储文件。
+ *
+ * Vercel 上 /tmp 是空的，这里用构建时打包进 bundle 的 data/glossary.json
+ * 作为初始种子，保证线上开箱即有完整术语库，而不是空库。
+ */
 async function ensureStore() {
   await fs.mkdir(path.dirname(DATA_PATH), { recursive: true });
   try {
     await fs.access(DATA_PATH);
   } catch {
-    await fs.writeFile(DATA_PATH, `${JSON.stringify([], null, 2)}\n`, "utf8");
+    await fs.writeFile(
+      DATA_PATH,
+      `${JSON.stringify(defaultTerms as unknown as GlossaryTerm[], null, 2)}\n`,
+      "utf8",
+    );
   }
 }
 

@@ -1,9 +1,4 @@
 {
   "framework": "nextjs",
-  "regions": ["hnd"],
-  "functions": {
-    "**/*.js": {
-      "includeFiles": "data/**"
-    }
-  }
+  "regions": ["hnd"]
 }
