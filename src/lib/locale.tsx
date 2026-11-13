@@ -792,7 +792,23 @@ const EN = {
   },
 } as const;
 
-export type Dictionary = typeof ZH;
+/**
+ * 把 `as const` 产生的字面量类型宽化为 string，递归处理嵌套字典。
+ *
+ * ZH / EN 都用了 `as const`，直接 `typeof ZH` 会把 brand 等字段锁成
+ * "合译" 这类字面量，导致结构完全相同、仅文本不同的 EN 无法赋值。
+ * Dictionary 的语义是「中英两份字典的公共结构」，本就不应绑定某一种语言的字面量。
+ * 宽化只放宽 string 字面量，键名、嵌套结构与可空性保持不变。
+ */
+type Wide<T> = T extends string
+  ? string
+  : T extends readonly (infer U)[]
+    ? readonly Wide<U>[]
+    : T extends object
+      ? { -readonly [K in keyof T]: Wide<T[K]> }
+      : T;
+
+export type Dictionary = Wide<typeof ZH>;
 
 const dicts: Record<Locale, Dictionary> = { zh: ZH, en: EN };
 

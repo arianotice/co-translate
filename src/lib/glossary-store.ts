@@ -3,7 +3,27 @@ import path from "path";
 
 import type { GlossaryTerm } from "./types";
 
-const DATA_PATH = path.join(process.cwd(), "data", "glossary.json");
+/**
+ * 术语库存储路径。
+ *
+ * - 本地开发 / 自托管（npm run dev / npm run start）：读写仓库内 data/glossary.json，行为不变。
+ * - Vercel serverless：部署文件系统只读，写入只会失败（EROFS）。
+ *   检测到 Vercel 运行时，回退到实例可写的 /tmp 目录，保证增删改查不崩。
+ *   代价：/tmp 随函数实例生命周期，实例回收后该实例新增术语不会跨请求保留。
+ *   需要长期持久化时，改指向 Vercel KV / Blob / 数据库（见 README 部署章节）。
+ */
+function resolveDataPath(): string {
+  if (process.env.VERCEL) {
+    return path.join(
+      process.env.VERCEL_TMP_DIR || "/tmp",
+      "co-translate-data",
+      "glossary.json",
+    );
+  }
+  return path.join(process.cwd(), "data", "glossary.json");
+}
+
+const DATA_PATH = resolveDataPath();
 
 async function ensureStore() {
   await fs.mkdir(path.dirname(DATA_PATH), { recursive: true });
