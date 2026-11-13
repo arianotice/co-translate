@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>合译 · 工坊演示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" />
+  <style>
+    :root {
+      --paper: #f6f1e8;
+      --ink: #1b1713;
+      --muted: #6b6258;
+      --seal: #9b3324;
+      --gold: #c4a574;
+      --line: rgba(27, 23, 19, 0.12);
+      --card: rgba(255, 252, 247, 0.72);
+    }
+    html.dark {
+      --paper: #12100e;
+      --ink: #f3eee4;
+      --muted: #b3a89a;
+      --seal: #e07a66;
+      --gold: #d4b48a;
+      --line: rgba(243, 238, 228, 0.12);
+      --card: rgba(28, 24, 20, 0.72);
+    }
+    html, body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Noto Sans SC", Tahoma, Arial, "Helvetica Neue", "Heiti SC", sans-serif;
+    }
+    .serif { font-family: "Noto Serif SC", "Songti SC", serif; }
+    .drop:first-letter {
+      float: left;
+      font-family: "Noto Serif SC", serif;
+      font-size: 3.4rem;
+      line-height: 0.85;
+      padding: 0.12em 0.12em 0 0;
+      color: var(--seal);
+    }
+    .hang { hanging-punctuation: first last; }
+    .scene {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 7rem 1.5rem 4rem;
+      background:
+        radial-gradient(1200px 500px at 80% -10%, rgba(155, 51, 36, 0.16), transparent 55%),
+        linear-gradient(180deg, transparent, var(--paper));
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(27, 23, 19, 0.08);
+    }
+    .seal-btn {
+      background: var(--ink);
+      color: var(--paper);
+      letter-spacing: 0.14em;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .seal-btn:hover { transform: translateY(-2px); opacity: 0.92; }
+    .ghost-btn {
+      border: 1px solid var(--line);
+      transition: background 0.25s ease;
+    }
+    .ghost-btn:hover { background: var(--card); }
+    .dialogue {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .step-no {
+      color: var(--seal);
+      font-family: "Noto Serif SC", serif;
+    }
+    nav, footer { border-color: var(--line); }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+  <nav class="fixed top-0 inset-x-0 z-20 flex items-center justify-between px-5 py-4 border-b" style="background: color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter: blur(18px); border-color: var(--line);">
+    <a href="#top" class="serif tracking-widest text-lg">合译</a>
+    <div class="flex items-center space-x-3 text-sm">
+      <a class="js-flow ghost-btn px-3 py-2 rounded-full" href="public/heyi-flow.html"><i class="fa-solid fa-cube mr-2"></i>三维流程</a>
+      <button id="themeBtn" class="ghost-btn w-10 h-10 rounded-full" type="button" aria-label="切换外观"><i class="fa-solid fa-circle-half-stroke"></i></button>
+    </div>
+  </nav>
+
+  <header id="top" class="scene max-w-5xl mx-auto">
+    <p class="text-xs tracking-widest uppercase mb-6" style="color: var(--muted);">Cowork Translation</p>
+    <h1 class="serif text-5xl md:text-7xl leading-tight mb-6">五个智能体起草，<br />译员签发。</h1>
+    <p class="text-lg md:text-xl max-w-2xl mb-10 hang" style="color: var(--muted);">
+      合译是给翻译家和翻译学习者用的中英互译工坊。规划、术语、翻译、语体、风险各管一段，交稿仍由人签。
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a class="seal-btn px-6 py-3 rounded-full text-sm" href="#scene"><i class="fa-solid fa-book-open mr-2"></i>看一个具体场景</a>
+      <a class="js-flow ghost-btn px-6 py-3 rounded-full text-sm" href="public/heyi-flow.html"><i class="fa-solid fa-route mr-2"></i>走进三维工坊</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-5 pb-24 space-y-24">
+    <section id="scene">
+      <p class="text-xs tracking-widest mb-3" style="color: var(--seal);">SCENE</p>
+      <h2 class="serif text-3xl md:text-4xl mb-6">先写清这本书怎么构成，再动笔。</h2>
+      <p class="drop hang text-lg leading-loose max-w-3xl" style="color: var(--muted);">
+        客户丢来一部三编的书，只要其中一编。通用机器翻译常把「下编」写成 Part Two。你在合译里写上书名、全书分三编、当前是第三部分；智能体按你给的背景译「编」，而不是凭常识改写。术语由模型初判、你删改后再锁。长文一次导入，规划一次，按段译完再拼合。
+      </p>
+    </section>
+
+    <section>
+      <p class="text-xs tracking-widest mb-3" style="color: var(--seal);">WORKSHOP</p>
+      <h2 class="serif text-3xl md:text-4xl mb-8">八个工位，围着同一份文稿转</h2>
+      <div class="grid gap-4 md:grid-cols-2">
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">01</span><h3 class="serif text-xl mt-2 mb-2">背景供给</h3><p style="color: var(--muted);">书名、分几编、当前在哪一部分。结构用词按你写的来。</p></article>
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">02</span><h3 class="serif text-xl mt-2 mb-2">规划护照</h3><p style="color: var(--muted);">先立语域、读者、事实锚点，再允许落笔。</p></article>
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">03</span><h3 class="serif text-xl mt-2 mb-2">判定术语</h3><p style="color: var(--muted);">专名、编章卷、制度词、机构与缩略词。普通动词不入库。</p></article>
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">04</span><h3 class="serif text-xl mt-2 mb-2">人工删改</h3><p style="color: var(--muted);">候选由你勾选、改译、删除，再导出 JSON / CSV / TMX。</p></article>
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">05</span><h3 class="serif text-xl mt-2 mb-2">分段翻译</h3><p style="color: var(--muted);">长文规划一次，按段起草并衔接上下文，再拼成完整译文。</p></article>
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">06</span><h3 class="serif text-xl mt-2 mb-2">语体校审</h3><p style="color: var(--muted);">只动节奏与情态。锁定术语不得被「更通顺」换掉。</p></article>
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">07</span><h3 class="serif text-xl mt-2 mb-2">六类风险</h3><p style="color: var(--muted);">术语、意义偏移、漏译增译、情态立场、语体、幻觉。</p></article>
+        <article class="card rounded-2xl p-6"><span class="step-no text-2xl">08</span><h3 class="serif text-xl mt-2 mb-2">译者签发</h3><p style="color: var(--muted);">五个智能体只起草、只标风险。你改完再签。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <p class="text-xs tracking-widest mb-3" style="color: var(--seal);">DIALOGUE</p>
+      <h2 class="serif text-3xl md:text-4xl mb-6">一次合译，大约是这样谈的</h2>
+      <pre class="dialogue rounded-2xl p-6 md:p-8 overflow-x-auto">译员：这部书分三编。我译的是下编，不是全书。
+      读者是法律史方向的研究者，语体要克制。
+
+规划：护照已立。
+      「编」按你写的背景，指全书的一部分。
+      下编 = 本书的第三部分，不写成 Part Two。
+
+术语：候选
+      下编  →  Book III
+      （普通动词未入库）
+      请删改后保存。未审核的不锁定。
+
+翻译：按段起草，已衔接下一段开头。
+      「下编」现作 Book III。机构名无术语命中，已标「待核验」。
+
+语体：只动了节奏和称谓。事实锚点和锁定术语未改。
+
+风险：高 — 一处机构名待核验，对照原文第 2 段。
+      中 — 情态比原文略硬。
+
+译员：改完。签发。</pre>
+    </section>
+
+    <section class="text-center py-8">
+      <h2 class="serif text-3xl md:text-4xl mb-4">工位会自己转，签发仍在你手里。</h2>
+      <p class="mb-8" style="color: var(--muted);">三维流程里，书、词典、红笔、火漆印都对应真实工序，不是装饰几何体。</p>
+      <a class="js-flow seal-btn inline-block px-8 py-3 rounded-full text-sm" href="public/heyi-flow.html">打开三维合译流程</a>
+    </section>
+  </main>
+
+  <footer class="px-5 py-10 text-center text-sm" style="color: var(--muted); border-top: 1px solid var(--line);">
+    <p class="serif tracking-widest mb-2">合译 · Cowork Translation</p>
+    <p><a href="https://github.com/arianotice/co-translate">github.com/arianotice/co-translate</a></p>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var key = "heyi.theme";
+      function systemDark() {
+        return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+      function apply(mode) {
+        var dark = mode === "dark" || (mode !== "light" && systemDark());
+        root.classList.toggle("dark", dark);
+      }
+      apply(localStorage.getItem(key) || "system");
+      document.getElementById("themeBtn").addEventListener("click", function () {
+        var next = root.classList.contains("dark") ? "light" : "dark";
+        localStorage.setItem(key, next);
+        apply(next);
+      });
+
+      function flowHref() {
+        if (location.protocol === "file:") {
+          return /\/public\//.test(location.pathname) ? "heyi-flow.html" : "public/heyi-flow.html";
+        }
+        return "heyi-flow.html";
+      }
+      var href = flowHref();
+      document.querySelectorAll(".js-flow").forEach(function (el) { el.setAttribute("href", href); });
+    })();
+  </script>
+</body>
+</html>
