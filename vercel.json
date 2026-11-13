@@ -3,7 +3,7 @@
   "regions": ["hnd"],
   "functions": {
     "**/*.js": {
-      "includeFiles": ["data/**"]
+      "includeFiles": "data/**"
     }
   }
 }
